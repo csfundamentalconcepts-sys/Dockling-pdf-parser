@@ -7,6 +7,16 @@ import re
 import json
 import os
 
+pipeline_options = PdfPipelineOptions()
+pipeline_options.ocr_options = RapidOcrOptions()
+pipeline_options.images_scale = 2.0
+
+converter = DocumentConverter(
+    format_options={
+        "pdf": PdfFormatOption(pipeline_options=pipeline_options)
+    }
+)
+
 def unlock_pdf(pdf_path: str, password: str):
     """
     Unlocks a password-protected PDF and returns path of unlocked PDF.
@@ -16,15 +26,6 @@ def unlock_pdf(pdf_path: str, password: str):
     print("PDF unlocked and saved in the /app directory")
 
 def parse_page_using_docling(pdf_path : str) :
-    pipeline_options = PdfPipelineOptions()
-    pipeline_options.ocr_options = RapidOcrOptions()
-    pipeline_options.images_scale = 2.0
-
-    converter = DocumentConverter(
-        format_options={
-            "pdf": PdfFormatOption(pipeline_options=pipeline_options)
-        }
-    )
    
     result = converter.convert(pdf_path)
     with open('conversion_results1.txt', 'w', encoding='utf-8') as f:
@@ -69,11 +70,12 @@ def parse_document(pdf_path : str, password : str) -> list:
     vulnerabilities = []
     unlocked_pdf_path_name = "unlocked.pdf"
     unlock_pdf(pdf_path=pdf_path, password=password)
+    total_pages = 0
     with pikepdf.open(unlocked_pdf_path_name) as pdf:
         total_pages = len(pdf.pages)
         print(f"Total pages: {total_pages}")
     
-    for page_num in range(30,45):
+    for page_num in range(0, total_pages):
 
         with pikepdf.open(unlocked_pdf_path_name) as pdf1:
             single_page_pdf = pikepdf.Pdf.new()
