@@ -34,7 +34,7 @@ def parse_page_using_docling(pdf_path : str) :
         
 
     
-def formatter(vulnerability : list) :
+def formatter(vulnerability: list):
     data = {}
 
     with open("conversion_results1.txt", "r", encoding="utf-8") as f:
@@ -58,10 +58,13 @@ def formatter(vulnerability : list) :
             else:
                 data[key] = value
 
-    print(len(data))
-    
-    if(len(data) == 13 or len(data) == 14) :
-        vulnerability.append(data)
+    if data:
+        first_key = next(iter(data))
+
+        if first_key.strip() == "Vulnerability ID":
+            vulnerability.append(data)
+        else:
+            print("Ignoring noise block")
 
 # parse_page_using_docling()
 
